@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Star, MapPin, Clock, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { products, categories } from "@/data/products";
+import { useProducts, useCategories } from "@/hooks/useProducts";
 import ProductCard from "@/components/ProductCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import heroImage from "@/assets/hero-bathroom.jpg";
 import categoryBasins from "@/assets/category-basins.jpg";
@@ -28,26 +29,28 @@ const testimonials = [
   { name: "Anita K.", text: "The brass shower set we bought is stunning. Premium quality at a fair price.", rating: 4 },
 ];
 
+const brandPartners = [
+  { name: "Jaquar", initial: "J" },
+  { name: "Hindware", initial: "H" },
+  { name: "Cera", initial: "C" },
+  { name: "Parryware", initial: "P" },
+  { name: "Kohler", initial: "K" },
+  { name: "Grohe", initial: "G" },
+];
+
 export default function Index() {
+  const { data: categories = [] } = useCategories();
+  const { data: products = [], isLoading } = useProducts();
   const featured = products.slice(0, 4);
 
   return (
     <>
       {/* Hero */}
       <section className="relative h-[85vh] min-h-[500px] flex items-end">
-        <img
-          src={heroImage}
-          alt="Luxury bathroom showroom"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        <img src={heroImage} alt="Luxury bathroom showroom" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/20 to-transparent" />
         <div className="relative container pb-16 md:pb-20">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="max-w-lg"
-          >
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-lg">
             <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight mb-4">
               Elevate Your Space
             </h1>
@@ -56,7 +59,7 @@ export default function Index() {
             </p>
             <div className="flex gap-3">
               <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-body font-medium">
-                <Link to="/products">Shop Now <ArrowRight className="ml-2 w-4 h-4" /></Link>
+                <Link to="/products">Explore Products <ArrowRight className="ml-2 w-4 h-4" /></Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 font-body">
                 <Link to="/contact">Visit Store</Link>
@@ -82,11 +85,11 @@ export default function Index() {
               transition={{ delay: i * 0.08 }}
             >
               <Link
-                to={`/products?category=${cat.id}`}
+                to={`/products?category=${cat.slug}`}
                 className="group relative block aspect-[4/5] rounded-lg overflow-hidden"
               >
                 <img
-                  src={categoryImages[cat.id]}
+                  src={categoryImages[cat.slug] || "/placeholder.svg"}
                   alt={cat.name}
                   loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -94,7 +97,6 @@ export default function Index() {
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-4">
                   <h3 className="font-heading text-lg font-semibold text-primary-foreground">{cat.name}</h3>
-                  <p className="text-xs text-primary-foreground/70 font-body">{cat.description}</p>
                 </div>
               </Link>
             </motion.div>
@@ -102,8 +104,33 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Trusted Partners */}
+      <section className="bg-secondary py-12 md:py-16">
+        <div className="container">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-center mb-8">
+            <h2 className="font-heading text-2xl md:text-3xl font-semibold text-foreground mb-2">Trusted Partners</h2>
+            <p className="text-muted-foreground font-body text-sm">We partner with India's top sanitaryware brands</p>
+          </motion.div>
+          <div className="flex flex-wrap justify-center gap-6 md:gap-10">
+            {brandPartners.map((brand, i) => (
+              <motion.div
+                key={brand.name}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="w-20 h-20 md:w-24 md:h-24 rounded-lg bg-card border border-border flex flex-col items-center justify-center gap-1 hover:shadow-md transition-shadow"
+              >
+                <span className="font-heading text-2xl font-bold text-accent">{brand.initial}</span>
+                <span className="text-[10px] text-muted-foreground font-body">{brand.name}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Featured Products */}
-      <section className="bg-secondary py-16 md:py-24">
+      <section className="py-16 md:py-24">
         <div className="container">
           <div className="flex items-end justify-between mb-10">
             <div>
@@ -114,11 +141,23 @@ export default function Index() {
               View All <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {featured.map((p, i) => (
-              <ProductCard key={p.id} product={p} index={i} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="space-y-3">
+                  <Skeleton className="aspect-square rounded-lg" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {featured.map((p, i) => (
+                <ProductCard key={p.id} product={p} index={i} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -126,9 +165,7 @@ export default function Index() {
       <section className="container py-16 md:py-24">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-            <h2 className="font-heading text-3xl md:text-4xl font-semibold text-foreground mb-4">
-              Trusted Since 2010
-            </h2>
+            <h2 className="font-heading text-3xl md:text-4xl font-semibold text-foreground mb-4">Trusted Since 2010</h2>
             <p className="text-muted-foreground font-body leading-relaxed mb-4">
               BathHaus has been the region's premier destination for quality sanitaryware and hardware. We partner with top global brands to bring you products that combine beauty, durability, and value.
             </p>
@@ -139,12 +176,7 @@ export default function Index() {
               <Link to="/about">Learn More</Link>
             </Button>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="grid grid-cols-2 gap-4"
-          >
+          <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="grid grid-cols-2 gap-4">
             {[
               { label: "Happy Customers", value: "15,000+" },
               { label: "Brands", value: "50+" },
