@@ -1,8 +1,21 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Product } from "@/data/products";
+import { ProductWithDetails } from "@/types/database";
 
-export default function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
+function getProductImage(product: ProductWithDetails): string {
+  const imageMedia = product.product_media?.find((m) => m.media_type === "image");
+  return imageMedia?.media_url || "/placeholder.svg";
+}
+
+function isInStock(product: ProductWithDetails): boolean {
+  if (!product.inventory || product.inventory.length === 0) return true;
+  return product.inventory[0].quantity > 0;
+}
+
+export default function ProductCard({ product, index = 0 }: { product: ProductWithDetails; index?: number }) {
+  const image = getProductImage(product);
+  const inStock = isInStock(product);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -16,17 +29,19 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
       >
         <div className="aspect-square overflow-hidden bg-secondary">
           <img
-            src={product.image}
+            src={image}
             alt={product.name}
             loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>
         <div className="p-4">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{product.brand}</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+            {product.category?.name || "Product"}
+          </p>
           <h3 className="font-heading text-base font-medium text-foreground mb-1 line-clamp-1">{product.name}</h3>
-          <p className="text-sm font-semibold text-accent">₹{product.price.toLocaleString('en-IN')}</p>
-          {!product.inStock && (
+          <p className="text-sm font-semibold text-accent">₹{product.price.toLocaleString("en-IN")}</p>
+          {!inStock && (
             <span className="inline-block mt-2 text-xs text-destructive font-medium">Out of Stock</span>
           )}
         </div>
