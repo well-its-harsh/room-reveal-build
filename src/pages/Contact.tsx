@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
+
+const MapLocation = lazy(() => import("@/components/MapLocation"));
 
 export default function Contact() {
   const [name, setName] = useState("");
@@ -48,10 +50,10 @@ export default function Contact() {
             </div>
           ))}
 
-          {/* Map placeholder */}
-          <div className="aspect-video rounded-lg overflow-hidden bg-secondary border border-border flex items-center justify-center">
-            <p className="text-sm text-muted-foreground font-body">Google Map — Enable with API key</p>
-          </div>
+          {/* Map */}
+          <Suspense fallback={<div className="aspect-video rounded-lg bg-secondary animate-pulse" />}>
+            <MapLocation className="aspect-video" />
+          </Suspense>
         </div>
 
         {/* Enquiry Form */}

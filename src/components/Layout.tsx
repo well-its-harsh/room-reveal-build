@@ -1,8 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, ShoppingBag, Phone } from "lucide-react";
+import { Menu, X, ShoppingBag, Phone, User, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -14,8 +15,15 @@ const navLinks = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { items } = useCart();
+  const { user, isAdmin, signOut } = useAuth();
   const cartCount = items.reduce((s, i) => s + i.quantity, 0);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -39,9 +47,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 {l.label}
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className={`text-sm font-medium transition-colors hover:text-accent ${
+                  location.pathname.startsWith("/admin") ? "text-accent" : "text-muted-foreground"
+                }`}
+              >
+                Admin
+              </Link>
+            )}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Link to="/cart" className="relative p-2 text-foreground hover:text-accent transition-colors">
               <ShoppingBag className="w-5 h-5" />
               {cartCount > 0 && (
@@ -50,6 +68,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </span>
               )}
             </Link>
+            {user ? (
+              <button onClick={handleSignOut} className="hidden md:flex p-2 text-foreground hover:text-accent transition-colors" title="Sign out">
+                <LogOut className="w-5 h-5" />
+              </button>
+            ) : (
+              <Link to="/login" className="hidden md:flex p-2 text-foreground hover:text-accent transition-colors" title="Sign in">
+                <User className="w-5 h-5" />
+              </Link>
+            )}
             <a href="tel:+910000000000" className="hidden md:flex p-2 text-foreground hover:text-accent transition-colors">
               <Phone className="w-5 h-5" />
             </a>
@@ -77,15 +104,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <nav className="container flex flex-col gap-6 pt-8">
               {navLinks.map((l) => (
-                <Link
-                  key={l.to}
-                  to={l.to}
-                  onClick={() => setMenuOpen(false)}
-                  className="font-heading text-3xl text-foreground hover:text-accent transition-colors"
-                >
+                <Link key={l.to} to={l.to} onClick={() => setMenuOpen(false)} className="font-heading text-3xl text-foreground hover:text-accent transition-colors">
                   {l.label}
                 </Link>
               ))}
+              {isAdmin && (
+                <Link to="/admin" onClick={() => setMenuOpen(false)} className="font-heading text-3xl text-foreground hover:text-accent transition-colors">
+                  Admin
+                </Link>
+              )}
+              <div className="pt-4 border-t border-border">
+                {user ? (
+                  <button onClick={() => { handleSignOut(); setMenuOpen(false); }} className="font-body text-lg text-muted-foreground">
+                    Sign Out
+                  </button>
+                ) : (
+                  <Link to="/login" onClick={() => setMenuOpen(false)} className="font-body text-lg text-accent">
+                    Sign In
+                  </Link>
+                )}
+              </div>
             </nav>
           </motion.div>
         )}

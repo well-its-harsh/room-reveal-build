@@ -1,27 +1,30 @@
 import { useSearchParams } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { products, categories, Category } from "@/data/products";
+import { useProducts, useCategories } from "@/hooks/useProducts";
 import ProductCard from "@/components/ProductCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialCat = searchParams.get("category") as Category | null;
-  const [activeCategory, setActiveCategory] = useState<Category | "all">(initialCat || "all");
+  const initialCat = searchParams.get("category") || "all";
+  const [activeCategory, setActiveCategory] = useState(initialCat);
 
-  const filtered = useMemo(
-    () => (activeCategory === "all" ? products : products.filter((p) => p.category === activeCategory)),
-    [activeCategory]
+  const { data: categories = [], isLoading: catLoading } = useCategories();
+  const { data: products = [], isLoading: prodLoading } = useProducts(
+    activeCategory !== "all" ? activeCategory : undefined
   );
 
-  const selectCategory = (cat: Category | "all") => {
-    setActiveCategory(cat);
-    if (cat === "all") {
+  const selectCategory = (slug: string) => {
+    setActiveCategory(slug);
+    if (slug === "all") {
       setSearchParams({});
     } else {
-      setSearchParams({ category: cat });
+      setSearchParams({ category: slug });
     }
   };
+
+  const isLoading = catLoading || prodLoading;
 
   return (
     <div className="container py-10 md:py-16">
@@ -45,9 +48,9 @@ export default function Products() {
         {categories.map((cat) => (
           <button
             key={cat.id}
-            onClick={() => selectCategory(cat.id)}
+            onClick={() => selectCategory(cat.slug)}
             className={`px-4 py-2 rounded-full text-sm font-medium font-body whitespace-nowrap transition-colors ${
-              activeCategory === cat.id
+              activeCategory === cat.slug
                 ? "bg-primary text-primary-foreground"
                 : "bg-secondary text-secondary-foreground hover:bg-muted"
             }`}
@@ -58,13 +61,25 @@ export default function Products() {
       </div>
 
       {/* Product Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {filtered.map((p, i) => (
-          <ProductCard key={p.id} product={p} index={i} />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="space-y-3">
+              <Skeleton className="aspect-square rounded-lg" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {products.map((p, i) => (
+            <ProductCard key={p.id} product={p} index={i} />
+          ))}
+        </div>
+      )}
 
-      {filtered.length === 0 && (
+      {!isLoading && products.length === 0 && (
         <p className="text-center text-muted-foreground py-16 font-body">No products found in this category.</p>
       )}
     </div>
