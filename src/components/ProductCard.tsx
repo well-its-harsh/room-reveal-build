@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Heart } from "lucide-react";
 import { ProductWithDetails } from "@/types/database";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 function getProductImage(product: ProductWithDetails): string {
   const imageMedia = product.product_media?.find((m) => m.media_type === "image");
@@ -15,6 +17,8 @@ function isInStock(product: ProductWithDetails): boolean {
 export default function ProductCard({ product, index = 0 }: { product: ProductWithDetails; index?: number }) {
   const image = getProductImage(product);
   const inStock = isInStock(product);
+  const { toggle, isWishlisted } = useWishlist();
+  const wishlisted = isWishlisted(product.id);
 
   return (
     <motion.div
@@ -22,7 +26,17 @@ export default function ProductCard({ product, index = 0 }: { product: ProductWi
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
+      className="relative"
     >
+      {/* Wishlist button */}
+      <button
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(product.id); }}
+        className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-card/80 backdrop-blur flex items-center justify-center hover:bg-card transition-colors"
+        title={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+      >
+        <Heart className={`w-4 h-4 ${wishlisted ? "fill-accent text-accent" : "text-muted-foreground"}`} />
+      </button>
+
       <Link
         to={`/product/${product.id}`}
         className="group block bg-card rounded-lg overflow-hidden border border-border hover:shadow-lg transition-shadow duration-300"

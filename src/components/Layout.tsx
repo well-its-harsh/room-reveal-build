@@ -1,13 +1,13 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, ShoppingBag, Phone, User, LogOut } from "lucide-react";
+import { Menu, X, ShoppingBag, Phone, User, LogOut, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 
 const navLinks = [
   { to: "/", label: "Home" },
-  { to: "/products", label: "Products" },
+  { to: "/products", label: "Shop" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ];
@@ -17,8 +17,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { items } = useCart();
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, profile, isAdmin, signOut } = useAuth();
   const cartCount = items.reduce((s, i) => s + i.quantity, 0);
+  const isOwnerOrAdmin = profile?.role === "admin" || profile?.role === "staff";
 
   const handleSignOut = async () => {
     await signOut();
@@ -47,6 +48,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 {l.label}
               </Link>
             ))}
+            {isOwnerOrAdmin && (
+              <Link
+                to="/owner"
+                className={`text-sm font-medium transition-colors hover:text-accent ${
+                  location.pathname.startsWith("/owner") ? "text-accent" : "text-muted-foreground"
+                }`}
+              >
+                Owner
+              </Link>
+            )}
             {isAdmin && (
               <Link
                 to="/admin"
@@ -59,7 +70,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             )}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Link to="/cart" className="relative p-2 text-foreground hover:text-accent transition-colors">
               <ShoppingBag className="w-5 h-5" />
               {cartCount > 0 && (
@@ -69,9 +80,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               )}
             </Link>
             {user ? (
-              <button onClick={handleSignOut} className="hidden md:flex p-2 text-foreground hover:text-accent transition-colors" title="Sign out">
-                <LogOut className="w-5 h-5" />
-              </button>
+              <>
+                <Link to="/account" className="hidden md:flex p-2 text-foreground hover:text-accent transition-colors" title="My Account">
+                  <User className="w-5 h-5" />
+                </Link>
+                <button onClick={handleSignOut} className="hidden md:flex p-2 text-foreground hover:text-accent transition-colors" title="Sign out">
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </>
             ) : (
               <Link to="/login" className="hidden md:flex p-2 text-foreground hover:text-accent transition-colors" title="Sign in">
                 <User className="w-5 h-5" />
@@ -108,9 +124,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   {l.label}
                 </Link>
               ))}
+              {user && (
+                <Link to="/account" onClick={() => setMenuOpen(false)} className="font-heading text-3xl text-foreground hover:text-accent transition-colors">
+                  My Account
+                </Link>
+              )}
+              {isOwnerOrAdmin && (
+                <Link to="/owner" onClick={() => setMenuOpen(false)} className="font-heading text-3xl text-foreground hover:text-accent transition-colors">
+                  Owner Panel
+                </Link>
+              )}
               {isAdmin && (
                 <Link to="/admin" onClick={() => setMenuOpen(false)} className="font-heading text-3xl text-foreground hover:text-accent transition-colors">
-                  Admin
+                  Admin Panel
                 </Link>
               )}
               <div className="pt-4 border-t border-border">
@@ -134,15 +160,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Footer */}
       <footer className="bg-primary text-primary-foreground py-12 mt-16">
-        <div className="container grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
+        <div className="container grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="col-span-2 md:col-span-1">
             <h3 className="font-heading text-lg font-semibold mb-3">BathHaus</h3>
             <p className="text-sm opacity-80 leading-relaxed">
-              Premium hardware & sanitaryware for modern homes. Trusted by thousands of homeowners since 2010.
+              Premium hardware & sanitaryware for modern homes. Trusted by thousands since 2010.
             </p>
           </div>
           <div>
-            <h4 className="font-heading text-sm font-semibold mb-3 uppercase tracking-wider opacity-70">Quick Links</h4>
+            <h4 className="font-heading text-sm font-semibold mb-3 uppercase tracking-wider opacity-70">Shop</h4>
             <div className="flex flex-col gap-2">
               {navLinks.map((l) => (
                 <Link key={l.to} to={l.to} className="text-sm opacity-80 hover:opacity-100 transition-opacity">
@@ -152,11 +178,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div>
+            <h4 className="font-heading text-sm font-semibold mb-3 uppercase tracking-wider opacity-70">Help</h4>
+            <div className="flex flex-col gap-2">
+              <Link to="/policies/shipping" className="text-sm opacity-80 hover:opacity-100 transition-opacity">Shipping</Link>
+              <Link to="/policies/returns" className="text-sm opacity-80 hover:opacity-100 transition-opacity">Returns</Link>
+              <Link to="/policies/privacy" className="text-sm opacity-80 hover:opacity-100 transition-opacity">Privacy</Link>
+              <Link to="/policies/terms" className="text-sm opacity-80 hover:opacity-100 transition-opacity">Terms</Link>
+            </div>
+          </div>
+          <div>
             <h4 className="font-heading text-sm font-semibold mb-3 uppercase tracking-wider opacity-70">Visit Us</h4>
             <p className="text-sm opacity-80 leading-relaxed">
               123 Main Street, City Center<br />
-              Mon–Sat: 9:00 AM – 8:00 PM<br />
-              Sun: 10:00 AM – 6:00 PM
+              Mon–Sat: 9AM – 8PM<br />
+              Sun: 10AM – 6PM
             </p>
           </div>
         </div>

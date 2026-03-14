@@ -56,7 +56,11 @@ export default function Login() {
           </Button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground font-body mt-6">
+        <div className="text-center mt-4">
+          <Link to="/forgot-password" className="text-sm text-accent hover:underline font-body">Forgot password?</Link>
+        </div>
+
+        <p className="text-center text-sm text-muted-foreground font-body mt-4">
           Don't have an account?{" "}
           <Link to="/signup" className="text-accent hover:underline font-medium">Sign up</Link>
         </p>
