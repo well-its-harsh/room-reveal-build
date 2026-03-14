@@ -109,45 +109,13 @@ export default function Cart() {
           <span className="font-heading text-xl font-bold text-foreground">₹{total.toLocaleString("en-IN")}</span>
         </div>
 
-        {!showCheckout ? (
-          <Button
-            size="lg"
-            className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-body font-medium"
-            onClick={() => {
-              if (!user) {
-                toast.error("Please sign in to checkout");
-                navigate("/login");
-              } else {
-                setShowCheckout(true);
-              }
-            }}
-          >
-            Proceed to Checkout
-          </Button>
-        ) : (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-3">
-            <div>
-              <label className="text-sm font-medium text-foreground font-body block mb-1">Name *</label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="font-body" />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-foreground font-body block mb-1">Phone *</label>
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 00000 00000" className="font-body" />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-foreground font-body block mb-1">Address (optional)</label>
-              <Textarea value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Delivery address" rows={2} className="font-body" />
-            </div>
-            <Button
-              size="lg"
-              className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-body font-medium"
-              onClick={handleCheckout}
-              disabled={createOrder.isPending}
-            >
-              {createOrder.isPending ? "Placing Order..." : "Place Order"}
-            </Button>
-          </motion.div>
-        )}
+        <Button
+          asChild
+          size="lg"
+          className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-body font-medium"
+        >
+          <Link to="/checkout">Proceed to Checkout</Link>
+        </Button>
 
         <p className="text-xs text-muted-foreground text-center mt-3 font-body">
           We'll confirm your order via phone or WhatsApp
