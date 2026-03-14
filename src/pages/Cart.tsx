@@ -1,25 +1,11 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/contexts/CartContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { useCreateOrder } from "@/hooks/useOrders";
-import { toast } from "sonner";
-import { useState } from "react";
 
 export default function Cart() {
-  const { items, removeItem, updateQuantity, total, clearCart } = useCart();
-  const { user, profile } = useAuth();
-  const createOrder = useCreateOrder();
-  const navigate = useNavigate();
-
-  const [name, setName] = useState(profile?.full_name || "");
-  const [phone, setPhone] = useState(profile?.phone || "");
-  const [address, setAddress] = useState("");
-  const [showCheckout, setShowCheckout] = useState(false);
+  const { items, removeItem, updateQuantity, total } = useCart();
 
   if (items.length === 0) {
     return (
@@ -33,31 +19,6 @@ export default function Cart() {
       </div>
     );
   }
-
-  const handleCheckout = async () => {
-    if (!user) {
-      toast.error("Please sign in to place an order");
-      navigate("/login");
-      return;
-    }
-    if (!name.trim() || !phone.trim()) {
-      toast.error("Please fill in your name and phone number");
-      return;
-    }
-
-    try {
-      await createOrder.mutateAsync({
-        userId: user.id,
-        items: items.map((i) => ({ productId: i.id, quantity: i.quantity, price: i.price })),
-        totalAmount: total,
-      });
-      clearCart();
-      toast.success("Order placed successfully! We'll contact you shortly.");
-      navigate("/");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to place order");
-    }
-  };
 
   return (
     <div className="container py-6 md:py-12 max-w-3xl">
@@ -102,13 +63,12 @@ export default function Cart() {
         ))}
       </div>
 
-      {/* Summary & Checkout */}
+      {/* Summary */}
       <div className="mt-8 p-6 bg-secondary rounded-lg">
         <div className="flex justify-between items-center mb-4">
           <span className="text-muted-foreground font-body">Subtotal</span>
           <span className="font-heading text-xl font-bold text-foreground">₹{total.toLocaleString("en-IN")}</span>
         </div>
-
         <Button
           asChild
           size="lg"
@@ -116,7 +76,6 @@ export default function Cart() {
         >
           <Link to="/checkout">Proceed to Checkout</Link>
         </Button>
-
         <p className="text-xs text-muted-foreground text-center mt-3 font-body">
           We'll confirm your order via phone or WhatsApp
         </p>
