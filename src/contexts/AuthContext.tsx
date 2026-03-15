@@ -23,22 +23,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    setProfile(data);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (error) {
+        console.warn("Profile fetch error:", error.message);
+        setProfile(null);
+        return;
+      }
+
+      if (data) {
+        setProfile(data);
+      } else {
+        // No profile row exists — build a minimal profile from user metadata
+        const meta = (await supabase.auth.getUser()).data.user?.user_metadata;
+        setProfile({
+          id: userId,
+          full_name: meta?.full_name || null,
+          phone: meta?.phone || null,
+          role: "customer",
+          created_at: new Date().toISOString(),
+        });
+      }
+    } catch {
+      setProfile(null);
+    }
   };
 
   useEffect(() => {
-    // Set up auth state listener BEFORE checking session
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          // Use setTimeout to avoid potential deadlock with Supabase auth
           setTimeout(() => fetchProfile(session.user.id), 0);
         } else {
           setProfile(null);
@@ -47,7 +68,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    // Then check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -71,7 +91,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     if (!error && data.user) {
-      // Create profile entry
       await supabase.from("profiles").insert({
         id: data.user.id,
         full_name: fullName,
