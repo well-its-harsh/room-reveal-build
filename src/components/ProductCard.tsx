@@ -39,7 +39,7 @@ export default function ProductCard({ product, index = 0 }: { product: ProductWi
 
       <Link
         to={`/product/${product.id}`}
-        className="group block bg-card rounded-lg overflow-hidden border border-border hover:shadow-lg transition-shadow duration-300"
+        className="group block bg-card rounded-xl overflow-hidden border border-border hover:shadow-lg transition-all duration-300 hover:border-accent/20"
       >
         <div className="aspect-square overflow-hidden bg-secondary">
           <img
