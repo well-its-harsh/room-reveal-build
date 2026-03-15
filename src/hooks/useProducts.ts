@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { ProductWithDetails, Category } from "@/types/database";
+import { demoCategories, demoProducts } from "@/data/demoData";
 
 export function useCategories() {
   return useQuery({
@@ -11,6 +12,8 @@ export function useCategories() {
         .select("*")
         .order("name");
       if (error) throw error;
+      // Return demo data if DB is empty
+      if (!data || data.length === 0) return demoCategories;
       return data as Category[];
     },
   });
@@ -31,7 +34,6 @@ export function useProducts(categorySlug?: string) {
         .order("created_at", { ascending: false });
 
       if (categorySlug && categorySlug !== "all") {
-        // Join with categories and filter by slug
         query = supabase
           .from("products")
           .select(`
@@ -46,6 +48,14 @@ export function useProducts(categorySlug?: string) {
 
       const { data, error } = await query;
       if (error) throw error;
+
+      // Return demo data if DB is empty
+      if (!data || data.length === 0) {
+        if (categorySlug && categorySlug !== "all") {
+          return demoProducts.filter(p => p.category?.slug === categorySlug);
+        }
+        return demoProducts;
+      }
       return data as ProductWithDetails[];
     },
   });
@@ -55,6 +65,9 @@ export function useProduct(id: string) {
   return useQuery({
     queryKey: ["product", id],
     queryFn: async () => {
+      // Check demo products first
+      const demo = demoProducts.find(p => p.id === id);
+      
       const { data, error } = await supabase
         .from("products")
         .select(`
@@ -65,9 +78,14 @@ export function useProduct(id: string) {
           reviews(*)
         `)
         .eq("id", id)
-        .single();
+        .maybeSingle();
+
       if (error) throw error;
-      return data as ProductWithDetails;
+      if (data) return data as ProductWithDetails;
+      
+      // Return demo product if not found in DB
+      if (demo) return demo;
+      return null;
     },
     enabled: !!id,
   });
@@ -89,6 +107,13 @@ export function useRelatedProducts(categoryId: string, excludeId: string) {
         .neq("id", excludeId)
         .limit(4);
       if (error) throw error;
+
+      // Fallback to demo data
+      if (!data || data.length === 0) {
+        return demoProducts
+          .filter(p => p.category_id === categoryId && p.id !== excludeId)
+          .slice(0, 4);
+      }
       return data as ProductWithDetails[];
     },
     enabled: !!categoryId && !!excludeId,
