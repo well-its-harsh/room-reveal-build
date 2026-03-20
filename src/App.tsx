@@ -102,6 +102,8 @@ const App = () => (
                   <Route path="orders" element={<OrdersPage />} />
                   <Route path="orders/:orderId" element={<OrderDetail />} />
                   <Route path="wishlist" element={<WishlistPage />} />
+                  <Route path="addresses" element={<AddressesPage />} />
+                  <Route path="appointments" element={<AppointmentsPage />} />
                 </Route>
 
                 {/* Public routes */}
