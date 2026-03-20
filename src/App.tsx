@@ -30,6 +30,8 @@ import ProfilePage from "./pages/account/Profile";
 import OrdersPage from "./pages/account/Orders";
 import OrderDetail from "./pages/account/OrderDetail";
 import WishlistPage from "./pages/account/Wishlist";
+import AddressesPage from "./pages/account/Addresses";
+import AppointmentsPage from "./pages/account/Appointments";
 import OwnerDashboard from "./pages/admin/Dashboard";
 import ProductManagement from "./pages/admin/ProductManagement";
 import InventoryManagement from "./pages/admin/InventoryManagement";
