@@ -1,12 +1,14 @@
 import { Link, Outlet, useLocation, Navigate } from "react-router-dom";
-import { User, ShoppingBag, Heart, MapPin, ArrowLeft } from "lucide-react";
+import { User, ShoppingBag, Heart, MapPin, ArrowLeft, CalendarDays, Smartphone } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const accountLinks = [
   { to: "/account", label: "Overview", icon: User, exact: true },
-  { to: "/account/orders", label: "My Orders", icon: ShoppingBag },
+  { to: "/account/orders", label: "Orders", icon: ShoppingBag },
   { to: "/account/wishlist", label: "Wishlist", icon: Heart },
   { to: "/account/profile", label: "Profile", icon: User },
+  { to: "/account/addresses", label: "Addresses", icon: MapPin },
+  { to: "/account/appointments", label: "Appointments", icon: CalendarDays },
 ];
 
 export default function AccountLayout() {
@@ -20,7 +22,7 @@ export default function AccountLayout() {
     <div className="container py-6 md:py-10">
       <div className="flex items-center gap-4 mb-6">
         <Link to="/" className="text-sm text-muted-foreground hover:text-foreground font-body flex items-center gap-1">
-          <ArrowLeft className="w-4 h-4" /> Back to Store
+          <ArrowLeft className="w-4 h-4" /> Store
         </Link>
         <h1 className="font-heading text-2xl font-semibold text-foreground">My Account</h1>
       </div>
