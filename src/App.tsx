@@ -37,6 +37,8 @@ import ProductManagement from "./pages/admin/ProductManagement";
 import InventoryManagement from "./pages/admin/InventoryManagement";
 import OrderManagement from "./pages/admin/OrderManagement";
 import ReviewManagement from "./pages/admin/ReviewManagement";
+import ContentManagement from "./pages/admin/ContentManagement";
+import Analytics from "./pages/admin/Analytics";
 import AdminOverview from "./pages/admin/AdminOverview";
 import UserManagement from "./pages/admin/UserManagement";
 import AuditLogs from "./pages/admin/AuditLogs";
@@ -72,22 +74,20 @@ const App = () => (
               <Routes>
                 {/* Owner dashboard (admin + staff) */}
                 <Route path="/owner" element={
-                  <OwnerGuard>
-                    <Layout><OwnerLayout /></Layout>
-                  </OwnerGuard>
+                  <OwnerGuard><Layout><OwnerLayout /></Layout></OwnerGuard>
                 }>
                   <Route index element={<OwnerDashboard />} />
                   <Route path="products" element={<ProductManagement />} />
                   <Route path="inventory" element={<InventoryManagement />} />
                   <Route path="orders" element={<OrderManagement />} />
                   <Route path="reviews" element={<ReviewManagement />} />
+                  <Route path="content" element={<ContentManagement />} />
+                  <Route path="analytics" element={<Analytics />} />
                 </Route>
 
                 {/* System admin dashboard (admin only) */}
                 <Route path="/admin" element={
-                  <AdminGuard>
-                    <Layout><AdminLayout /></Layout>
-                  </AdminGuard>
+                  <AdminGuard><Layout><AdminLayout /></Layout></AdminGuard>
                 }>
                   <Route index element={<AdminOverview />} />
                   <Route path="users" element={<UserManagement />} />

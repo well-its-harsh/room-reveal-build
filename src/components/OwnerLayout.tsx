@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, Package, Warehouse, ShoppingCart, Star, ArrowLeft, Image } from "lucide-react";
+import { LayoutDashboard, Package, Warehouse, ShoppingCart, Star, ArrowLeft, FileText, BarChart3 } from "lucide-react";
 
 const ownerLinks = [
   { to: "/owner", label: "Dashboard", icon: LayoutDashboard },
@@ -7,6 +7,8 @@ const ownerLinks = [
   { to: "/owner/inventory", label: "Inventory", icon: Warehouse },
   { to: "/owner/orders", label: "Orders", icon: ShoppingCart },
   { to: "/owner/reviews", label: "Reviews", icon: Star },
+  { to: "/owner/content", label: "Content", icon: FileText },
+  { to: "/owner/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 export default function OwnerLayout() {
@@ -28,7 +30,7 @@ export default function OwnerLayout() {
             to={to}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium font-body whitespace-nowrap transition-colors ${
               location.pathname === to
-                ? "bg-primary text-primary-foreground"
+                ? "bg-accent text-accent-foreground"
                 : "bg-secondary text-secondary-foreground hover:bg-muted"
             }`}
           >
