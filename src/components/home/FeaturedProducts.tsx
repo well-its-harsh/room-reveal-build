@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useProducts } from "@/hooks/useProducts";
+import { useFeaturedProducts } from "@/hooks/useProducts";
 import ProductCard from "@/components/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function FeaturedProducts() {
-  const { data: products = [], isLoading } = useProducts();
+  const { data: products = [], isLoading } = useFeaturedProducts();
   const featured = products.slice(0, 4);
 
   return (

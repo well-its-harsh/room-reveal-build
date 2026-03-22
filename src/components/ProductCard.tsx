@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Heart } from "lucide-react";
+import { Heart, Star, Eye } from "lucide-react";
 import { ProductWithDetails } from "@/types/database";
 import { useWishlist } from "@/contexts/WishlistContext";
 
@@ -19,6 +19,9 @@ export default function ProductCard({ product, index = 0 }: { product: ProductWi
   const inStock = isInStock(product);
   const { toggle, isWishlisted } = useWishlist();
   const wishlisted = isWishlisted(product.id);
+  const rating = product.rating_avg ?? (product.reviews?.length
+    ? product.reviews.reduce((s, r) => s + r.rating, 0) / product.reviews.length
+    : null);
 
   return (
     <motion.div
@@ -28,6 +31,20 @@ export default function ProductCard({ product, index = 0 }: { product: ProductWi
       transition={{ duration: 0.4, delay: index * 0.05 }}
       className="relative"
     >
+      {/* Badges */}
+      <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+        {product.ar_enabled && (
+          <span className="flex items-center gap-1 text-[10px] font-body font-medium bg-accent text-accent-foreground px-2 py-0.5 rounded-full">
+            <Eye className="w-3 h-3" /> AR
+          </span>
+        )}
+        {!inStock && (
+          <span className="text-[10px] font-body font-medium bg-destructive text-destructive-foreground px-2 py-0.5 rounded-full">
+            Sold Out
+          </span>
+        )}
+      </div>
+
       {/* Wishlist button */}
       <button
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(product.id); }}
@@ -50,14 +67,24 @@ export default function ProductCard({ product, index = 0 }: { product: ProductWi
           />
         </div>
         <div className="p-4">
+          {product.brand && (
+            <p className="text-[10px] text-accent font-body font-semibold uppercase tracking-wider mb-0.5">
+              {product.brand}
+            </p>
+          )}
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-            {product.category?.name || "Product"}
+            {product.category?.name || product.categories?.name || "Product"}
           </p>
           <h3 className="font-heading text-base font-medium text-foreground mb-1 line-clamp-1">{product.name}</h3>
-          <p className="text-sm font-semibold text-accent">₹{product.price.toLocaleString("en-IN")}</p>
-          {!inStock && (
-            <span className="inline-block mt-2 text-xs text-destructive font-medium">Out of Stock</span>
-          )}
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-accent">₹{product.price.toLocaleString("en-IN")}</p>
+            {rating && (
+              <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
+                <Star className="w-3 h-3 fill-accent text-accent" />
+                {rating.toFixed(1)}
+              </span>
+            )}
+          </div>
         </div>
       </Link>
     </motion.div>
