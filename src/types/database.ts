@@ -19,10 +19,15 @@ export interface Product {
   name: string;
   description: string | null;
   price: number;
+  brand: string | null;
   width: number | null;
   height: number | null;
   depth: number | null;
   ar_enabled: boolean;
+  rating_avg: number | null;
+  rating_count: number | null;
+  is_featured: boolean;
+  status: 'active' | 'draft' | 'archived';
   created_at: string;
   updated_at: string;
 }
@@ -84,9 +89,45 @@ export interface AdminLog {
   created_at: string;
 }
 
+export interface Shipment {
+  id: string;
+  order_id: string;
+  tracking_number: string | null;
+  courier: string | null;
+  status: string;
+  estimated_delivery: string | null;
+  created_at: string;
+}
+
+export interface Address {
+  id: string;
+  user_id: string;
+  full_address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  created_at: string;
+}
+
+export interface Wishlist {
+  id: string;
+  user_id: string;
+  product_id: string;
+  created_at: string;
+}
+
+export interface ARAsset {
+  id: string;
+  product_id: string;
+  asset_url: string;
+  asset_type: 'glb' | '3d_model' | 'image_preview';
+  created_at: string;
+}
+
 // Extended types with joins
 export interface ProductWithDetails extends Product {
   category?: Category;
+  categories?: Category;
   product_media?: ProductMedia[];
   inventory?: Inventory[];
   reviews?: Review[];

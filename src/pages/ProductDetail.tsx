@@ -135,7 +135,13 @@ export default function ProductDetail() {
 
         {/* Info */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2 font-body">{product.category?.name}</p>
+          <div className="flex items-center gap-2 mb-2">
+            {product.brand && (
+              <span className="text-xs font-semibold text-accent font-body uppercase tracking-wider">{product.brand}</span>
+            )}
+            {product.brand && product.category?.name && <span className="text-xs text-muted-foreground">·</span>}
+            <span className="text-xs text-muted-foreground uppercase tracking-wider font-body">{product.category?.name}</span>
+          </div>
           <h1 className="font-heading text-2xl md:text-3xl font-semibold text-foreground mb-3 leading-tight">{product.name}</h1>
 
           {/* Rating */}
