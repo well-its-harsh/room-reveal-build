@@ -34,6 +34,7 @@ import AddressesPage from "./pages/account/Addresses";
 import AppointmentsPage from "./pages/account/Appointments";
 import OwnerDashboard from "./pages/admin/Dashboard";
 import ProductManagement from "./pages/admin/ProductManagement";
+import CategoryManagement from "./pages/admin/CategoryManagement";
 import InventoryManagement from "./pages/admin/InventoryManagement";
 import OrderManagement from "./pages/admin/OrderManagement";
 import ReviewManagement from "./pages/admin/ReviewManagement";
@@ -43,21 +44,32 @@ import AdminOverview from "./pages/admin/AdminOverview";
 import UserManagement from "./pages/admin/UserManagement";
 import AuditLogs from "./pages/admin/AuditLogs";
 import SiteSettings from "./pages/admin/SiteSettings";
+import AIMakeover from "./pages/AIMakeover";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function FullScreenLoader() {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm text-muted-foreground font-body">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
 function OwnerGuard({ children }: { children: React.ReactNode }) {
-  const { profile, loading } = useAuth();
-  if (loading) return <div className="container py-20 text-center text-muted-foreground font-body">Loading...</div>;
-  const role = profile?.role;
-  if (role !== "admin" && role !== "staff") return <Navigate to="/" replace />;
+  const { profile, loading, isOwner } = useAuth();
+  if (loading) return <FullScreenLoader />;
+  if (!isOwner) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const { isAdmin, loading } = useAuth();
-  if (loading) return <div className="container py-20 text-center text-muted-foreground font-body">Loading...</div>;
+  if (loading) return <FullScreenLoader />;
   if (!isAdmin) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
@@ -78,6 +90,7 @@ const App = () => (
                 }>
                   <Route index element={<OwnerDashboard />} />
                   <Route path="products" element={<ProductManagement />} />
+                  <Route path="categories" element={<CategoryManagement />} />
                   <Route path="inventory" element={<InventoryManagement />} />
                   <Route path="orders" element={<OrderManagement />} />
                   <Route path="reviews" element={<ReviewManagement />} />
@@ -114,6 +127,7 @@ const App = () => (
                 <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
                 <Route path="/about" element={<Layout><About /></Layout>} />
                 <Route path="/contact" element={<Layout><Contact /></Layout>} />
+                <Route path="/ai-makeover" element={<Layout><AIMakeover /></Layout>} />
                 <Route path="/login" element={<Layout><Login /></Layout>} />
                 <Route path="/signup" element={<Layout><Signup /></Layout>} />
                 <Route path="/forgot-password" element={<Layout><ForgotPassword /></Layout>} />

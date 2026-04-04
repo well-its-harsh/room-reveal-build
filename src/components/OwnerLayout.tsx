@@ -1,9 +1,10 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, Package, Warehouse, ShoppingCart, Star, ArrowLeft, FileText, BarChart3 } from "lucide-react";
+import { LayoutDashboard, Package, Warehouse, ShoppingCart, Star, ArrowLeft, FileText, BarChart3, FolderOpen } from "lucide-react";
 
 const ownerLinks = [
   { to: "/owner", label: "Dashboard", icon: LayoutDashboard },
   { to: "/owner/products", label: "Products", icon: Package },
+  { to: "/owner/categories", label: "Categories", icon: FolderOpen },
   { to: "/owner/inventory", label: "Inventory", icon: Warehouse },
   { to: "/owner/orders", label: "Orders", icon: ShoppingCart },
   { to: "/owner/reviews", label: "Reviews", icon: Star },

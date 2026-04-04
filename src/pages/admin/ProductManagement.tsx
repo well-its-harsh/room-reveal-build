@@ -17,11 +17,14 @@ export default function ProductManagement() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [brand, setBrand] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
   const [depth, setDepth] = useState("");
   const [arEnabled, setArEnabled] = useState(false);
+  const [isFeatured, setIsFeatured] = useState(false);
+  const [status, setStatus] = useState<string>("active");
   const [imageUrl, setImageUrl] = useState("");
 
   const { data: products = [], isLoading } = useQuery({
@@ -46,8 +49,9 @@ export default function ProductManagement() {
   });
 
   const resetForm = () => {
-    setName(""); setDescription(""); setPrice(""); setCategoryId("");
-    setWidth(""); setHeight(""); setDepth(""); setArEnabled(false); setImageUrl("");
+    setName(""); setDescription(""); setPrice(""); setBrand(""); setCategoryId("");
+    setWidth(""); setHeight(""); setDepth(""); setArEnabled(false); setIsFeatured(false);
+    setStatus("active"); setImageUrl("");
     setEditing(null); setShowForm(false);
   };
 
@@ -56,11 +60,14 @@ export default function ProductManagement() {
     setName(p.name);
     setDescription(p.description || "");
     setPrice(String(p.price));
+    setBrand(p.brand || "");
     setCategoryId(p.category_id);
     setWidth(p.width ? String(p.width) : "");
     setHeight(p.height ? String(p.height) : "");
     setDepth(p.depth ? String(p.depth) : "");
     setArEnabled(p.ar_enabled);
+    setIsFeatured(p.is_featured);
+    setStatus(p.status || "active");
     setImageUrl(p.product_media?.[0]?.media_url || "");
     setShowForm(true);
   };
@@ -71,18 +78,19 @@ export default function ProductManagement() {
         name,
         description,
         price: parseFloat(price),
+        brand: brand || null,
         category_id: categoryId,
         width: width ? parseFloat(width) : null,
         height: height ? parseFloat(height) : null,
         depth: depth ? parseFloat(depth) : null,
         ar_enabled: arEnabled,
+        is_featured: isFeatured,
+        status,
       };
 
       if (editing) {
         const { error } = await supabase.from("products").update(productData).eq("id", editing.id);
         if (error) throw error;
-
-        // Update media
         if (imageUrl) {
           await supabase.from("product_media").upsert({
             product_id: editing.id,
@@ -93,7 +101,6 @@ export default function ProductManagement() {
       } else {
         const { data, error } = await supabase.from("products").insert(productData).select().single();
         if (error) throw error;
-
         if (imageUrl && data) {
           await supabase.from("product_media").insert({
             product_id: data.id,
@@ -123,6 +130,15 @@ export default function ProductManagement() {
     onError: (err: any) => toast.error(err.message),
   });
 
+  const statusBadge = (s: string) => {
+    const colors: Record<string, string> = {
+      active: "bg-green-100 text-green-800",
+      draft: "bg-yellow-100 text-yellow-800",
+      archived: "bg-red-100 text-red-800",
+    };
+    return colors[s] || "bg-secondary text-secondary-foreground";
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -132,7 +148,6 @@ export default function ProductManagement() {
         </Button>
       </div>
 
-      {/* Form */}
       {showForm && (
         <div className="bg-card border border-border rounded-lg p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -143,6 +158,10 @@ export default function ProductManagement() {
             <div>
               <label className="text-sm font-medium font-body block mb-1">Name *</label>
               <Input value={name} onChange={(e) => setName(e.target.value)} className="font-body" />
+            </div>
+            <div>
+              <label className="text-sm font-medium font-body block mb-1">Brand</label>
+              <Input value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="e.g. Jaquar, Kohler" className="font-body" />
             </div>
             <div>
               <label className="text-sm font-medium font-body block mb-1">Category *</label>
@@ -160,6 +179,18 @@ export default function ProductManagement() {
             <div>
               <label className="text-sm font-medium font-body block mb-1">Price (₹) *</label>
               <Input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="font-body" />
+            </div>
+            <div>
+              <label className="text-sm font-medium font-body block mb-1">Status</label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-body"
+              >
+                <option value="active">Active</option>
+                <option value="draft">Draft</option>
+                <option value="archived">Archived</option>
+              </select>
             </div>
             <div>
               <label className="text-sm font-medium font-body block mb-1">Image URL</label>
@@ -181,9 +212,15 @@ export default function ProductManagement() {
               <label className="text-sm font-medium font-body block mb-1">Depth (mm)</label>
               <Input type="number" value={depth} onChange={(e) => setDepth(e.target.value)} className="font-body" />
             </div>
-            <div className="flex items-center gap-2">
-              <input type="checkbox" id="ar" checked={arEnabled} onChange={(e) => setArEnabled(e.target.checked)} />
-              <label htmlFor="ar" className="text-sm font-body">AR Enabled</label>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="ar" checked={arEnabled} onChange={(e) => setArEnabled(e.target.checked)} />
+                <label htmlFor="ar" className="text-sm font-body">AR Enabled</label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="featured" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} />
+                <label htmlFor="featured" className="text-sm font-body">Featured</label>
+              </div>
             </div>
           </div>
           <Button
@@ -196,12 +233,11 @@ export default function ProductManagement() {
         </div>
       )}
 
-      {/* Product List */}
       <div className="space-y-3">
         {isLoading ? (
           <p className="text-muted-foreground font-body">Loading products...</p>
         ) : products.length === 0 ? (
-          <p className="text-muted-foreground font-body text-center py-8">No products yet. Add your first product above.</p>
+          <p className="text-muted-foreground font-body text-center py-8">No products yet.</p>
         ) : (
           products.map((p: any) => (
             <div key={p.id} className="flex items-center gap-4 p-4 bg-card border border-border rounded-lg">
@@ -211,17 +247,21 @@ export default function ProductManagement() {
                 className="w-14 h-14 rounded object-cover bg-secondary flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
-                <h4 className="font-heading text-sm font-medium text-foreground line-clamp-1">{p.name}</h4>
-                <p className="text-xs text-muted-foreground font-body">{p.category?.name} • ₹{p.price.toLocaleString("en-IN")}</p>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-heading text-sm font-medium text-foreground line-clamp-1">{p.name}</h4>
+                  <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded capitalize font-body ${statusBadge(p.status)}`}>{p.status}</span>
+                  {p.is_featured && <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-accent/20 text-accent font-body">Featured</span>}
+                </div>
+                <p className="text-xs text-muted-foreground font-body">
+                  {p.category?.name || "–"} • {p.brand || "–"} • ₹{p.price.toLocaleString("en-IN")}
+                </p>
               </div>
               <div className="flex gap-1">
                 <button onClick={() => openEdit(p)} className="p-2 text-muted-foreground hover:text-foreground">
                   <Pencil className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => {
-                    if (confirm("Delete this product?")) deleteMutation.mutate(p.id);
-                  }}
+                  onClick={() => { if (confirm("Delete this product?")) deleteMutation.mutate(p.id); }}
                   className="p-2 text-muted-foreground hover:text-destructive"
                 >
                   <Trash2 className="w-4 h-4" />
