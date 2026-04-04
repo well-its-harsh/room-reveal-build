@@ -12,13 +12,34 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
+  isOwner: boolean;
+  isStaff: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const ROLE_CACHE_KEY = "bathhaus-profile-cache";
+
+function cacheProfile(profile: Profile | null) {
+  if (profile) {
+    localStorage.setItem(ROLE_CACHE_KEY, JSON.stringify(profile));
+  } else {
+    localStorage.removeItem(ROLE_CACHE_KEY);
+  }
+}
+
+function getCachedProfile(): Profile | null {
+  try {
+    const stored = localStorage.getItem(ROLE_CACHE_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(getCachedProfile);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,47 +53,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         console.warn("Profile fetch error:", error.message);
-        setProfile(null);
+        const cached = getCachedProfile();
+        if (cached && cached.id === userId) {
+          setProfile(cached);
+        } else {
+          setProfile(null);
+          cacheProfile(null);
+        }
         return;
       }
 
       if (data) {
         setProfile(data);
+        cacheProfile(data);
       } else {
-        // No profile row exists — build a minimal profile from user metadata
         const meta = (await supabase.auth.getUser()).data.user?.user_metadata;
-        setProfile({
+        const fallback: Profile = {
           id: userId,
           full_name: meta?.full_name || null,
           phone: meta?.phone || null,
           role: "customer",
           created_at: new Date().toISOString(),
-        });
+        };
+        setProfile(fallback);
+        cacheProfile(fallback);
       }
     } catch {
       setProfile(null);
+      cacheProfile(null);
     }
   };
 
   useEffect(() => {
+    // Set up auth listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
+          // Use setTimeout to avoid Supabase deadlock
           setTimeout(() => fetchProfile(session.user.id), 0);
         } else {
           setProfile(null);
+          cacheProfile(null);
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Then get initial session
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id);
+        await fetchProfile(session.user.id);
       }
       setLoading(false);
     });
@@ -112,12 +146,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setProfile(null);
     setSession(null);
+    cacheProfile(null);
   };
 
   const isAdmin = profile?.role === "admin";
+  const isOwner = profile?.role === "admin" || profile?.role === "staff";
+  const isStaff = profile?.role === "staff";
 
   return (
-    <AuthContext.Provider value={{ user, profile, session, loading, signUp, signIn, signOut, isAdmin }}>
+    <AuthContext.Provider value={{ user, profile, session, loading, signUp, signIn, signOut, isAdmin, isOwner, isStaff }}>
       {children}
     </AuthContext.Provider>
   );
