@@ -24,32 +24,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchProfile = async (userId: string) => {
     try {
+      // ✅ FIXED: Use .single() to get exact profile, fail if not found
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", userId)
-        .maybeSingle();
+        .single();
 
       if (error) {
-        console.warn("Profile fetch error:", error.message);
+        console.error("Profile fetch error:", error.message);
+        // ✅ FIXED: Don't create default profile, just set to null
         setProfile(null);
         return;
       }
 
+      // ✅ FIXED: Only set profile if actual data exists
       if (data) {
         setProfile(data);
       } else {
-        // No profile row exists — build a minimal profile from user metadata
-        const meta = (await supabase.auth.getUser()).data.user?.user_metadata;
-        setProfile({
-          id: userId,
-          full_name: meta?.full_name || null,
-          phone: meta?.phone || null,
-          role: "customer",
-          created_at: new Date().toISOString(),
-        });
+        setProfile(null);
       }
-    } catch {
+    } catch (err) {
+      console.error("Error fetching profile:", err);
       setProfile(null);
     }
   };

@@ -2,7 +2,7 @@ export interface Profile {
   id: string;
   full_name: string | null;
   phone: string | null;
-  role: 'customer' | 'admin' | 'staff';
+  role: 'customer' | 'admin' | 'owner' | 'staff';
   created_at: string;
 }
 

@@ -51,7 +51,8 @@ function OwnerGuard({ children }: { children: React.ReactNode }) {
   const { profile, loading } = useAuth();
   if (loading) return <div className="container py-20 text-center text-muted-foreground font-body">Loading...</div>;
   const role = profile?.role;
-  if (role !== "admin" && role !== "staff") return <Navigate to="/" replace />;
+  // ✅ FIXED: Check for 'owner' role, not 'staff'
+  if (role !== "admin" && role !== "owner") return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 

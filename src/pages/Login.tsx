@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,22 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, profile } = useAuth();
   const navigate = useNavigate();
+
+  // 🔍 After login, wait for AuthContext to fetch profile, then redirect
+  useEffect(() => {
+    if (profile) {
+      console.log("✅ Profile loaded from AuthContext:", profile.role);
+      if (profile.role === "admin") {
+        navigate("/admin");
+      } else if (profile.role === "owner") {
+        navigate("/owner");
+      } else {
+        navigate("/account");
+      }
+    }
+  }, [profile, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +42,8 @@ export default function Login() {
       toast.error(error.message);
     } else {
       toast.success("Welcome back!");
-      navigate("/");
+      // Profile will be loaded by AuthContext onAuthStateChange
+      // useEffect above will handle redirect
     }
   };
 
