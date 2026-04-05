@@ -15,8 +15,9 @@ const quickSearches = ["Basin", "Toilet", "Shower", "Cabinet", "Tap", "Sink"];
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialCat = searchParams.get("category") || "all";
+  const initialSearch = searchParams.get("search") || "";
   const [activeCategory, setActiveCategory] = useState(initialCat);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500000]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
