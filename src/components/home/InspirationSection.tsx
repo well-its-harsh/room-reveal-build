@@ -32,7 +32,7 @@ export default function InspirationSection() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-body font-medium mb-4">
               <Sparkles className="w-3 h-3" />
-              Coming Soon
+              Now Available
             </div>
             <h2 className="font-heading text-3xl md:text-4xl font-semibold text-foreground mb-5 leading-tight">
               AI Bathroom
