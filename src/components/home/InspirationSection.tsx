@@ -55,8 +55,10 @@ export default function InspirationSection() {
                 </li>
               ))}
             </ul>
-            <Button variant="outline" className="font-body" disabled>
-              Launching Phase 2 <ArrowRight className="ml-2 w-4 h-4" />
+            <Button asChild variant="outline" className="font-body">
+              <Link to="/ai-makeover">
+                Try AI Makeover <ArrowRight className="ml-2 w-4 h-4" />
+              </Link>
             </Button>
           </motion.div>
         </div>
