@@ -1,117 +1,50 @@
-# Shree Radhe Tiles & Hardware - Luxury eCommerce Platform
+# Shree Radhe Tiles & Hardware | Luxury Architectural Platform
 
-![Project Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![React](https://img.shields.io/badge/React-18.x-61dafb.svg?logo=react)
-![Vite](https://img.shields.io/badge/Vite-5.x-646cff.svg?logo=vite)
-![Supabase](https://img.shields.io/badge/Supabase-Backend-3ecf8e.svg?logo=supabase)
+![Project Version](https://img.shields.io/badge/version-1.1.0-gold.svg)
+![Aesthetic](https://img.shields.io/badge/Aesthetic-Premium%20Luxury-black.svg)
 
-A fully-featured, premium e-commerce platform built specifically for **Shree Radhe Tiles & Hardware**. This application provides a high-end browsing and purchasing experience, offering state-of-the-art features like AI Room Makeovers, 3D Product Previews, AR visualization, integrated video consultations, and real-time chat.
+A visionary digital experience meticulously crafted for **Shree Radhe Tiles & Hardware**. This platform redefines architectural discovery, blending the tactile elegance of premium fixtures with cutting-edge immersive technology.
 
 ---
 
-## 🌟 Key Features
+## 🏛️ Project Vision
 
-* **Premium UI/UX:** Built with Tailwind CSS, Framer Motion, and shadcn/ui to deliver an aesthetically pleasing, responsive luxury shopping experience.
-* **Intelligent Discovery:** Advanced filtering, category management, and keyword-based fuzzy search powered by Fuse.js and Supabase.
-* **AI Room Makeovers:** Users can upload photos of their rooms and generate AI-powered redesigns using Hugging Face/Gemini APIs.
-* **AR & 3D Visualization:** Experience products in Augmented Reality before buying.
-* **Real-time Consultations:** Integrated with Daily.co to support video calls and store-visit appointments.
-* **Robust E-Commerce Flows:** Fully functional Cart, Wishlist, secure checkout, order tracking, and history management.
-* **Admin Dashboard:** Role-based access control (Admin, Customer, Owner, Staff) managing products, customers, leads, reviews, and analytics.
-* **Secure Backend System:** Powered by Supabase for PostgreSQL database, secure Authentication (Email, Magic Links, OAuth), and Row Level Security (RLS).
+Shree Radhe Tiles & Hardware is more than an e-commerce platform; it is a digital concierge for architects, interior designers, and homeowners. It serves as a bridge between high-end global manufacturing and the bespoke needs of Indian architectural projects.
 
----
+### 🌟 Core Experience Pillars
 
-## 💻 Technology Stack
-
-**Frontend Frameworks & Libraries**
-- [React (v18)](https://reactjs.org/) + [Vite](https://vitejs.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- UI Components: [shadcn-ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/)
-- Styling: [Tailwind CSS](https://tailwindcss.com/) + Custom Animations.
-- State/Data Management: [TanStack React Query](https://tanstack.com/query/v5) + React Hook Form
-
-**Backend & Integration Services**
-- Database & Auth: [Supabase](https://supabase.com/)
-- Real-time Video: [@daily-co](https://www.daily.co/)
-- Generative AI Integration: Google GenAI (`@google/genai`) / HuggingFace
-- 3D Rendering: [Three.js](https://threejs.org/) & React Three Fiber
+*   **Cinematic Discovery**: An interface that mirrors the physical elegance of a luxury showroom, built on a foundation of minimalist design and fluid animations.
+*   **AI Room Reimagination**: A sophisticated GenAI engine that allows clients to visualize their living spaces with curated tiles and hardware before a single brick is laid.
+*   **Immersive Visualization**: Native support for **Augmented Reality (AR)** and **3D Model Interaction**, enabling spatial awareness and material inspection in real-time.
+*   **Expert Concierge**: Integrated real-time video consultation and store-visit scheduling, ensuring personalized professional guidance at every step of the project.
+*   **Intelligent Curation**: A discovery engine indexed by area (Kitchen, Bathroom, Commercial) and category, mapping natural search intent to a catalog of 2500+ premium SKUs.
 
 ---
 
-## 🚀 Getting Started
+## 🛠️ Technology Showcase
 
-To run this project locally, follow these steps:
+While hidden behind a seamless user experience, the platform utilizes a world-class stack for performance and security:
 
-### 1. Requirements
-* Node.js (v18 or higher recommended)
-* npm (v9+) or Bun
-* A Supabase Account
-
-### 2. Clone and Install
-```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/shree-radhe-tiles.git
-cd room-reveal-build
-npm install
-```
-
-### 3. Environment Variables
-Create a `.env` file in the root directory. You will need to populate it with keys from your Supabase Dashboard and integrated API providers:
-
-```env
-# Supabase Configuration
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-
-# Video Call Configuration
-VITE_DAILY_API_KEY=your_daily_co_api_key
-
-# AI Agents
-VITE_GEMINI_API_KEY=your_google_gemini_api_key
-VITE_HUGGINGFACE_API_KEY=your_hugging_face_api_key
-```
-
-*(Note: Never commit your `.env` file to version control).*
-
-### 4. Run the Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:5173](http://localhost:5173) in your browser to see the application.
+*   **Logic**: React 18 & TypeScript for type-safe architectural integrity.
+*   **Styling**: A bespoke design system built with Tailwind CSS & Framer Motion.
+*   **Infrastructure**: Supabase (PostgreSQL) providing real-time data sync for notifications and chat.
+*   **Intelligence**: Integration with Gemini Pro & Hugging Face for neural-style room generation.
+*   **Media**: Three.js for 3D rendering and Daily.co for high-fidelity video consultations.
 
 ---
 
-## 🛠 Database Setup
+## 💎 Elite Features
 
-The backend schema relies heavily on Supabase Postgres. The `/supabase/migrations` directory contains all SQL needed for schema validation and initial table creation (e.g. `products`, `profiles`, `orders`, `appointments`).
-
-To apply the database remotely or locally, you can use the Supabase CLI:
-```bash
-npx supabase link --project-ref your_project_ref
-npx supabase db push
-```
-
-For seed data (Dummy products, tiles, and hardware testing units), check out the `seed-database.sql` and `seed_catalog.sql` files found in the root partition.
+*   **Shop By Area**: Intuitive navigation through 16 specific home and commercial environments.
+*   **Product Comparison**: Advanced side-by-side technical specification analysis with export options.
+*   **Real-time Collaboration**: Live chat and persistent notification system for client-owner synergy.
+*   **Admin Excellence**: A comprehensive management suite for inventory, analytics, lead tracking, and role-based operational control.
 
 ---
 
-## 📦 Deployment Guide
-
-For optimal speed and continuous deployment, deploying to **Vercel** is highly recommended.
-
-1. Create a [Vercel](https://vercel.com/) Account linked to your GitHub.
-2. Click **Add New -> Project** and import this repository.
-3. Vercel automatically detects the framework as Vite. Keep the Default Settings (`npm run build`).
-4. In the **Environment Variables** section, copy the contents of your local `.env` line by line.
-5. Click **Deploy**.
-
-**Configure Domain Name (GoDaddy):**
-- In Vercel, navigate to Settings > Domains. Add your domain (`radhetilesandhardware.in`).
-- Go to your GoDaddy DNS settings and add the Vercel-provided `A` record (Value: `76.76.21.21`) and `CNAME` record (`cname.vercel-dns.com`).
-- *(Important)* Go to your Supabase Dashboard -> Authentication -> URL Configuration and update the Site URL and Redirect URIs to point to your new live domain.
+## 📝 Governance
+**Proprietary Software.**
+Designed for exclusivity and high-performance architectural retail. All rights reserved by Shree Radhe Tiles & Hardware.
 
 ---
-
-## 📝 License
-
-Proprietary Software. Internal use only or per custom client agreement.
+*Elevating spaces with the finishing touches they deserve.*
