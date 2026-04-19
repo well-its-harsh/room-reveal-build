@@ -6,11 +6,13 @@ import { Profile } from "@/types/database";
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
+  role: string | null;
   session: Session | null;
   loading: boolean;
   signUp: (email: string, password: string, fullName: string, phone: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  signInWithOAuth: (provider: "google") => Promise<{ data: any; error: any }>;
   isAdmin: boolean;
   isOwner: boolean;
   isStaff: boolean;
@@ -18,7 +20,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const ROLE_CACHE_KEY = "bathhaus-profile-cache";
+const ROLE_CACHE_KEY = "Shree Radhe Tiles & Hardware-profile-cache";
 
 function cacheProfile(profile: Profile | null) {
   if (profile) {
@@ -40,12 +42,12 @@ function getCachedProfile(): Profile | null {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(getCachedProfile);
+  const [role, setRole] = useState<string | null>(() => localStorage.getItem("Shree Radhe Tiles & Hardware_role"));
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
     try {
-      // ✅ FIXED: Use .single() to get exact profile, fail if not found
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
@@ -53,79 +55,88 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .single();
 
       if (error) {
-<<<<<<< HEAD
         console.error("Profile fetch error:", error.message);
-        // ✅ FIXED: Don't create default profile, just set to null
         setProfile(null);
-=======
-        console.warn("Profile fetch error:", error.message);
-        const cached = getCachedProfile();
-        if (cached && cached.id === userId) {
-          setProfile(cached);
-        } else {
-          setProfile(null);
-          cacheProfile(null);
-        }
->>>>>>> e526d2a1934b2b7f2209d073a20ab9b470634826
+        setRole(null);
+        cacheProfile(null);
+        localStorage.removeItem("Shree Radhe Tiles & Hardware_role");
         return;
       }
 
-      // ✅ FIXED: Only set profile if actual data exists
       if (data) {
         setProfile(data);
+        setRole(data.role);
         cacheProfile(data);
+        if (data.role) {
+          localStorage.setItem("Shree Radhe Tiles & Hardware_role", data.role);
+        } else {
+          localStorage.removeItem("Shree Radhe Tiles & Hardware_role");
+        }
       } else {
-<<<<<<< HEAD
         setProfile(null);
-=======
-        const meta = (await supabase.auth.getUser()).data.user?.user_metadata;
-        const fallback: Profile = {
-          id: userId,
-          full_name: meta?.full_name || null,
-          phone: meta?.phone || null,
-          role: "customer",
-          created_at: new Date().toISOString(),
-        };
-        setProfile(fallback);
-        cacheProfile(fallback);
->>>>>>> e526d2a1934b2b7f2209d073a20ab9b470634826
+        setRole(null);
+        cacheProfile(null);
+        localStorage.removeItem("Shree Radhe Tiles & Hardware_role");
       }
     } catch (err) {
       console.error("Error fetching profile:", err);
       setProfile(null);
+      setRole(null);
       cacheProfile(null);
+      localStorage.removeItem("Shree Radhe Tiles & Hardware_role");
     }
   };
+useEffect(() => {
+  let mounted = true;
 
-  useEffect(() => {
-    // Set up auth listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          // Use setTimeout to avoid Supabase deadlock
-          setTimeout(() => fetchProfile(session.user.id), 0);
-        } else {
-          setProfile(null);
-          cacheProfile(null);
-          setLoading(false);
-        }
-      }
-    );
+  const initSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!mounted) return;
+    setSession(session);
+    setUser(session?.user ?? null);
+    if (session?.user) {
+      await fetchProfile(session.user.id);
+    } else {
+      setProfile(null);
+      setRole(null);
+      cacheProfile(null);
+      localStorage.removeItem('Shree Radhe Tiles & Hardware_role');
+    }
+    setLoading(false);
+  };
 
-    // Then get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await fetchProfile(session.user.id);
+  initSession();
+
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    if (!mounted) return;
+    setSession(session);
+    setUser(session?.user ?? null);
+    
+    if (session?.user) {
+      if (event === 'SIGNED_IN') {
+        // Upsert profile for OAuth or new sessions
+        await supabase.from('profiles').upsert({
+          id: session.user.id,
+          full_name: session.user.user_metadata?.full_name ?? session.user.user_metadata?.name ?? '',
+          avatar_url: session.user.user_metadata?.avatar_url ?? '',
+          role: 'customer'
+        });
       }
+      await fetchProfile(session.user.id);
+    } else {
+      setProfile(null);
+      setRole(null);
+      cacheProfile(null);
+      localStorage.removeItem('Shree Radhe Tiles & Hardware_role');
       setLoading(false);
-    });
+    }
+  });
 
-    return () => subscription.unsubscribe();
-  }, []);
+  return () => {
+    mounted = false;
+    subscription.unsubscribe();
+  };
+}, []);
 
   const signUp = async (email: string, password: string, fullName: string, phone: string) => {
     const { data, error } = await supabase.auth.signUp({
@@ -138,6 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     if (!error && data.user) {
+      // Adding default role to match expectations
       await supabase.from("profiles").insert({
         id: data.user.id,
         full_name: fullName,
@@ -154,20 +166,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setProfile(null);
-    setSession(null);
-    cacheProfile(null);
+  const signInWithOAuth = async (provider: "google") => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    return { data, error };
   };
 
-  const isAdmin = profile?.role === "admin";
-  const isOwner = profile?.role === "admin" || profile?.role === "staff";
-  const isStaff = profile?.role === "staff";
+  const signOut = async () => {
+    try {
+      // Clear Supabase session with a safety timeout logic
+      await Promise.race([
+        supabase.auth.signOut(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Sign out timeout")), 3000))
+      ]).catch(err => console.warn("Supabase signOut error or timeout:", err));
+    } catch (err) {
+      console.error("Error during signing out:", err);
+    } finally {
+      // Forcefully clear all local auth state
+      setUser(null);
+      setProfile(null);
+      setRole(null);
+      setSession(null);
+      cacheProfile(null);
+      localStorage.removeItem("Shree Radhe Tiles & Hardware-profile-cache");
+      localStorage.removeItem("Shree Radhe Tiles & Hardware_role");
+      // Optional: Clear Supabase local storage keys too if needed
+      Object.keys(localStorage).forEach(key => {
+        if (key.includes('sb-') && key.includes('-auth-token')) {
+          localStorage.removeItem(key);
+        }
+      });
+    }
+  };
+
+  const isAdmin = role === "admin";
+  const isOwner = role === "admin" || role === "owner" || role === "staff";
+  const isStaff = role === "staff";
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-muted-foreground font-body">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <AuthContext.Provider value={{ user, profile, session, loading, signUp, signIn, signOut, isAdmin, isOwner, isStaff }}>
+    <AuthContext.Provider value={{ user, profile, role, session, loading, signUp, signIn, signOut, signInWithOAuth, isAdmin, isOwner, isStaff }}>
       {children}
     </AuthContext.Provider>
   );

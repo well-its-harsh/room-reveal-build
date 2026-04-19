@@ -1,0 +1,3 @@
+# Hugging Face API Proxy Redirect
+# Used by Vercel/Netlify for production CORS bypass
+/hf-api/* https://router.huggingface.co/:splat 200

@@ -1,4 +1,4 @@
-# BathHaus QA Audit Report
+# Shree Radhe Tiles & Hardware QA Audit Report
 Date: 2026-04-05
 
 ## ✅ Working Features

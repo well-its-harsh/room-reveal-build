@@ -3,7 +3,10 @@ import { supabase } from "@/lib/supabase";
 import { Star, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
+import { useMarkPageAsSeen } from "@/hooks/useMarkPageAsSeen";
+
 export default function ReviewManagement() {
+  useMarkPageAsSeen('reviews');
   const queryClient = useQueryClient();
 
   const { data: reviews = [], isLoading } = useQuery({

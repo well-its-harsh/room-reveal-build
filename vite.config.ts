@@ -11,6 +11,27 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    proxy: {
+      '/hf-api': {
+        target: 'https://router.huggingface.co/hf-inference',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/hf-api/, ''),
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq, req) => {
+            const auth = req.headers['authorization'];
+            if (auth) {
+              proxyReq.setHeader('Authorization', auth);
+            }
+          });
+        }
+      },
+      '/rapidapi': {
+        target: 'https://room-ai-virtual-staging-professional-interior-design.p.rapidapi.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/rapidapi/, ''),
+        secure: false,
+      }
+    }
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {

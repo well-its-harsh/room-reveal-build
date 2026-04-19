@@ -1,4 +1,4 @@
--- BathHaus Database Seed Script
+-- Shree Radhe Tiles & Hardware Database Seed Script
 -- Run this in your Supabase SQL Editor (https://ulzqcpceklkwxzceykbd.supabase.co)
 -- This will insert 7 categories and 16 products with images and inventory
 

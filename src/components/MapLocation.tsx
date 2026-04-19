@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { STORE_INFO } from "@/constants/storeInfo";
 
 // Fix Leaflet default marker icon issue
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -23,9 +24,9 @@ interface MapLocationProps {
 }
 
 export default function MapLocation({
-  lat = 19.076,
-  lng = 72.8777,
-  shopName = "BathHaus Store",
+  lat = 21.3640,
+  lng = 77.4740,
+  shopName = "Shree Radhe Tiles & Hardware",
   className = "",
 }: MapLocationProps) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -34,7 +35,7 @@ export default function MapLocation({
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
-    const map = L.map(mapRef.current).setView([lat, lng], 15);
+    const map = L.map(mapRef.current).setView([lat, lng], 16);
     mapInstanceRef.current = map;
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -43,7 +44,7 @@ export default function MapLocation({
 
     L.marker([lat, lng])
       .addTo(map)
-      .bindPopup(`<strong>${shopName}</strong>`)
+      .bindPopup(`<strong>${shopName}</strong><br />Mishra Line, Behind Police Station,<br />Paratwada, Dist. Amravati – 444805`)
       .openPopup();
 
     return () => {
@@ -53,7 +54,7 @@ export default function MapLocation({
   }, [lat, lng, shopName]);
 
   const handleGetDirections = () => {
-    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
+    window.open(STORE_INFO.googleMapsLink, "_blank");
   };
 
   return (

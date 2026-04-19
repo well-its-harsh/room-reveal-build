@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import showroomImage from "@/assets/showroom.jpg";
 
 const stats = [
@@ -12,52 +11,68 @@ const stats = [
 
 export default function ShopStory() {
   return (
-    <section className="bg-secondary">
-      <div className="container py-20 md:py-28">
-        <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
+    <section className="py-16 md:py-20 border-t border-[#E8E4DF]">
+      <div className="container">
+        <div className="grid md:grid-cols-2 gap-10 lg:gap-20 items-center">
+          {/* Left: Copy */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.6 }}
           >
-            <span className="text-xs uppercase tracking-[0.2em] text-accent font-body font-medium">Our Story</span>
-            <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-semibold text-foreground mt-2 mb-5 leading-tight">
-              Not Just Products.
-              <br />
-              <span className="text-accent">Complete Interior Pieces.</span>
+            <span className="text-[11px] uppercase tracking-[0.22em] text-[#C8860A] font-semibold block mb-3">
+              Our Story
+            </span>
+            <h2
+              className="text-[#1A1A1A] mb-5 leading-tight"
+              style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", fontWeight: 500 }}
+            >
+              Not Just Products.{" "}
+              <span className="text-[#C8860A]">Complete Interiors.</span>
             </h2>
-            <p className="text-muted-foreground font-body leading-relaxed mb-4">
-              Since 2010, BathHaus has been more than a shop — we're a showroom experience. Walk through our curated displays, feel the finish of every fixture, and let our experts guide you toward the perfect choices for your home.
+            <p className="text-[15px] text-[#6B6B6B] leading-relaxed mb-4">
+              Since 2010, Shree Radhe Tiles & Hardware has been more than a shop — we're a complete showroom experience. Walk through our curated displays, feel the finish of every tile and fitting, and let our experts guide you.
             </p>
-            <p className="text-muted-foreground font-body leading-relaxed mb-8">
-              Whether you're renovating a powder room or building your dream home, we bring the world's finest brands to your doorstep with expert installation guidance.
+            <p className="text-[15px] text-[#6B6B6B] leading-relaxed mb-8">
+              Whether you're renovating a bathroom or building your dream home, we bring India's finest brands together with expert advice and zero-pressure consultation.
             </p>
-            <Button asChild variant="outline" className="font-body">
-              <Link to="/about">Learn More About Us</Link>
-            </Button>
+            <Link
+              to="/about"
+              className="inline-flex items-center gap-2 border border-[#1A1A1A] text-[#1A1A1A] text-[14px] font-medium px-6 py-2.5 hover:bg-[#1A1A1A] hover:text-white transition-all duration-200"
+            >
+              Learn More About Us
+            </Link>
           </motion.div>
 
+          {/* Right: Image + stats */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="space-y-5"
+            transition={{ duration: 0.6 }}
+            className="space-y-4"
           >
-            <div className="rounded-xl overflow-hidden aspect-[3/2]">
+            <div className="overflow-hidden aspect-[4/3]">
               <img
                 src={showroomImage}
-                alt="BathHaus premium showroom interior"
+                alt="Shree Radhe Tiles – Showroom Interior"
                 loading="lazy"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover hover:scale-[1.02] transition-transform duration-700"
               />
             </div>
+
+            {/* Stats grid */}
             <div className="grid grid-cols-2 gap-3">
               {stats.map((stat) => (
-                <div key={stat.label} className="bg-card rounded-xl p-5 text-center border border-border">
-                  <p className="font-heading text-2xl md:text-3xl font-bold text-accent">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground font-body mt-1">{stat.label}</p>
+                <div
+                  key={stat.label}
+                  className="bg-[#F7F5F2] border border-[#E8E4DF] p-5 text-center"
+                >
+                  <p className="text-[1.75rem] font-semibold text-[#C8860A] leading-none mb-1">
+                    {stat.value}
+                  </p>
+                  <p className="text-[12px] text-[#6B6B6B]">{stat.label}</p>
                 </div>
               ))}
             </div>

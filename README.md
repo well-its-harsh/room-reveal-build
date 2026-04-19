@@ -1,73 +1,117 @@
-# Welcome to your Lovable project
+# Shree Radhe Tiles & Hardware - Luxury eCommerce Platform
 
-## Project info
+![Project Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![React](https://img.shields.io/badge/React-18.x-61dafb.svg?logo=react)
+![Vite](https://img.shields.io/badge/Vite-5.x-646cff.svg?logo=vite)
+![Supabase](https://img.shields.io/badge/Supabase-Backend-3ecf8e.svg?logo=supabase)
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+A fully-featured, premium e-commerce platform built specifically for **Shree Radhe Tiles & Hardware**. This application provides a high-end browsing and purchasing experience, offering state-of-the-art features like AI Room Makeovers, 3D Product Previews, AR visualization, integrated video consultations, and real-time chat.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🌟 Key Features
 
-**Use Lovable**
+* **Premium UI/UX:** Built with Tailwind CSS, Framer Motion, and shadcn/ui to deliver an aesthetically pleasing, responsive luxury shopping experience.
+* **Intelligent Discovery:** Advanced filtering, category management, and keyword-based fuzzy search powered by Fuse.js and Supabase.
+* **AI Room Makeovers:** Users can upload photos of their rooms and generate AI-powered redesigns using Hugging Face/Gemini APIs.
+* **AR & 3D Visualization:** Experience products in Augmented Reality before buying.
+* **Real-time Consultations:** Integrated with Daily.co to support video calls and store-visit appointments.
+* **Robust E-Commerce Flows:** Fully functional Cart, Wishlist, secure checkout, order tracking, and history management.
+* **Admin Dashboard:** Role-based access control (Admin, Customer, Owner, Staff) managing products, customers, leads, reviews, and analytics.
+* **Secure Backend System:** Powered by Supabase for PostgreSQL database, secure Authentication (Email, Magic Links, OAuth), and Row Level Security (RLS).
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 💻 Technology Stack
 
-**Use your preferred IDE**
+**Frontend Frameworks & Libraries**
+- [React (v18)](https://reactjs.org/) + [Vite](https://vitejs.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- UI Components: [shadcn-ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/)
+- Styling: [Tailwind CSS](https://tailwindcss.com/) + Custom Animations.
+- State/Data Management: [TanStack React Query](https://tanstack.com/query/v5) + React Hook Form
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+**Backend & Integration Services**
+- Database & Auth: [Supabase](https://supabase.com/)
+- Real-time Video: [@daily-co](https://www.daily.co/)
+- Generative AI Integration: Google GenAI (`@google/genai`) / HuggingFace
+- 3D Rendering: [Three.js](https://threejs.org/) & React Three Fiber
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🚀 Getting Started
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+To run this project locally, follow these steps:
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 1. Requirements
+* Node.js (v18 or higher recommended)
+* npm (v9+) or Bun
+* A Supabase Account
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+### 2. Clone and Install
+```bash
+git clone https://github.com/YOUR_GITHUB_USERNAME/shree-radhe-tiles.git
+cd room-reveal-build
+npm install
 ```
 
-**Edit a file directly in GitHub**
+### 3. Environment Variables
+Create a `.env` file in the root directory. You will need to populate it with keys from your Supabase Dashboard and integrated API providers:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```env
+# Supabase Configuration
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-**Use GitHub Codespaces**
+# Video Call Configuration
+VITE_DAILY_API_KEY=your_daily_co_api_key
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# AI Agents
+VITE_GEMINI_API_KEY=your_google_gemini_api_key
+VITE_HUGGINGFACE_API_KEY=your_hugging_face_api_key
+```
 
-## What technologies are used for this project?
+*(Note: Never commit your `.env` file to version control).*
 
-This project is built with:
+### 4. Run the Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:5173](http://localhost:5173) in your browser to see the application.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## 🛠 Database Setup
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+The backend schema relies heavily on Supabase Postgres. The `/supabase/migrations` directory contains all SQL needed for schema validation and initial table creation (e.g. `products`, `profiles`, `orders`, `appointments`).
 
-## Can I connect a custom domain to my Lovable project?
+To apply the database remotely or locally, you can use the Supabase CLI:
+```bash
+npx supabase link --project-ref your_project_ref
+npx supabase db push
+```
 
-Yes, you can!
+For seed data (Dummy products, tiles, and hardware testing units), check out the `seed-database.sql` and `seed_catalog.sql` files found in the root partition.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 📦 Deployment Guide
+
+For optimal speed and continuous deployment, deploying to **Vercel** is highly recommended.
+
+1. Create a [Vercel](https://vercel.com/) Account linked to your GitHub.
+2. Click **Add New -> Project** and import this repository.
+3. Vercel automatically detects the framework as Vite. Keep the Default Settings (`npm run build`).
+4. In the **Environment Variables** section, copy the contents of your local `.env` line by line.
+5. Click **Deploy**.
+
+**Configure Domain Name (GoDaddy):**
+- In Vercel, navigate to Settings > Domains. Add your domain (`radhetilesandhardware.in`).
+- Go to your GoDaddy DNS settings and add the Vercel-provided `A` record (Value: `76.76.21.21`) and `CNAME` record (`cname.vercel-dns.com`).
+- *(Important)* Go to your Supabase Dashboard -> Authentication -> URL Configuration and update the Site URL and Redirect URIs to point to your new live domain.
+
+---
+
+## 📝 License
+
+Proprietary Software. Internal use only or per custom client agreement.

@@ -1,0 +1,194 @@
+## Flow A — Browse & Enquire (Primary)
+
+1
+
+**Homepage** → Hero banner or nav click
+
+2
+
+**Collection page** (e.g., Floor Tiles) → filter by finish/brand/size → browse grid
+
+3
+
+**Product Detail Page** → view photos, check availability, read description
+
+4
+
+Click **"Enquire Now"** → Enquiry modal pre-filled with product → submit name/phone/message
+
+5
+
+**Owner notified** in real-time (push notification in dashboard \+ email/WhatsApp)
+
+6
+
+Customer receives **confirmation message** ("We'll contact you within 2 hours")
+
+Drop-off risk at Step 4: if modal is too long → keep form to 3 fields max (Name, Phone, Message optional)
+
+## Flow B — Shop by Area
+
+1
+
+Homepage → "Shop By Area" section → click **"Bathroom"** tile
+
+2
+
+Bathroom curated collection → all relevant tiles \+ fittings for bathroom space
+
+3
+
+Select product → PDP → Enquire Now → same as Flow A step 4–6
+
+## Flow C — AR Visualization
+
+1
+
+PDP → click **"View in My Space"** (AR tab or AR button)
+
+2
+
+Permission prompt: "Allow camera access to visualize this tile in your room" → Allow
+
+3
+
+Camera feed opens → product overlaid → customer drags/scales to position on floor/wall
+
+4
+
+Screenshot → share or save → return to PDP
+
+5
+
+After AR: "Like what you see? Enquire Now →" contextual CTA shown
+
+Conversion trigger: show enquiry CTA immediately after AR session ends
+
+## Flow D — AI Room Makeover
+
+1
+
+Homepage → "Try AI Makeover →" CTA or nav → **/ai-makeover**
+
+2
+
+Step 1: Upload room photo (bathroom / kitchen / living room)
+
+3
+
+Step 2: Select preferences — style (Modern/Traditional/Luxe/Minimal/Industrial) \+ dominant colour
+
+4
+
+Step 3: Gemini API generates redesigned room → shows before/after slider
+
+5
+
+Below generated image: **"Products Used in This Design"** → catalog of 3–5 suggested products each with "Enquire Now"
+
+6
+
+Customer enquires on suggested products → Flow A step 4–6
+
+## Flow E — Store Visit Appointment
+
+1
+
+Nav "Book Visit" CTA or PDP "Book Store Visit" button → **/book-visit**
+
+2
+
+Select category(s) of interest → choose date → choose time slot → enter name/phone
+
+3
+
+Submit → confirmation screen with store address \+ "Add to Calendar"
+
+4
+
+Owner receives notification in dashboard → confirms/reschedules
+
+5
+
+Customer receives WhatsApp/SMS confirmation with store address and date/time
+
+## Flow F — Video Call Enquiry
+
+1
+
+PDP → "Request Video Call" button → modal
+
+2
+
+Customer fills: name, phone, preferred date/time, notes, platform preference (Google Meet / WhatsApp Video)
+
+3
+
+Owner notified → confirms time → video link sent via WhatsApp/email
+
+4
+
+Video call happens → post-call: "Did your query get resolved?" feedback form with option to submit formal enquiry
+
+## Flow G — AI Chatbot Assistance
+
+1
+
+Customer on any page → clicks **Chatbot FAB** (bottom-right)
+
+2
+
+Chatbot opens: "Hi\! I'm here to help you find the perfect tiles and hardware. What are you looking for?"
+
+3
+
+Customer describes need (e.g., "anti-skid floor tiles for bathroom") → Gemini responds with category suggestions \+ product links
+
+4
+
+If complex query: chatbot says "Let me connect you with our team" → opens WhatsApp with conversation context
+
+5
+
+Lead captured: chatbot interaction logged as enquiry in owner dashboard
+
+## Flow H — Similar Products Catalog Discovery
+
+1
+
+Customer on PDP → scrolls down to "More in Floor Tiles" section → sees 50+ compact product cards
+
+2
+
+Customer spots a different variant (different size/finish/brand) → clicks "Enquire for This" micro-button directly on compact card
+
+3
+
+Mini enquiry modal (smaller, pre-filled) → Name \+ Phone → Submit
+
+4
+
+Owner notified with specific product reference
+
+## Flow I — Owner Enquiry Management
+
+1
+
+Owner logs in → Dashboard shows real-time enquiry feed (Supabase Realtime)
+
+2
+
+New enquiry notification → sound \+ badge → click to expand enquiry details
+
+3
+
+Owner sees: customer name, phone, product reference, message, enquiry channel, timestamp
+
+4
+
+Actions: Mark responded | Call customer | Open WhatsApp | Archive
+
+5
+
+Enquiry moves from "New" → "In Progress" → "Resolved"
+
