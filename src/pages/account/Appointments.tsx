@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -192,10 +193,23 @@ export default function AccountAppointments() {
 
                     {appt.notes && <p className="text-[14px] text-[#6B6B6B] leading-relaxed font-body italic italic">"{appt.notes}"</p>}
 
-                    {appt.status === 'reschedule-requested' && (
+                    {appt.status === 'reschedule-requested' && appt.reschedule_note && (
                         <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-xl">
                            <p className="text-[11px] font-bold text-blue-900 uppercase mb-1">Reschedule Pending</p>
-                           <p className="text-[13px] text-blue-700/80">Requested for {JSON.parse(appt.reschedule_note).newDate} at {JSON.parse(appt.reschedule_note).newTime}</p>
+                           {(() => {
+                             try {
+                               const noteData = typeof appt.reschedule_note === 'string' 
+                                 ? JSON.parse(appt.reschedule_note) 
+                                 : appt.reschedule_note;
+                               return (
+                                 <p className="text-[13px] text-blue-700/80">
+                                   Requested for {noteData.newDate} at {noteData.newTime}
+                                 </p>
+                               );
+                             } catch (e) {
+                               return <p className="text-[13px] text-blue-700/80">Reschedule details unavailable</p>;
+                             }
+                           })()}
                         </div>
                     )}
                   </div>
