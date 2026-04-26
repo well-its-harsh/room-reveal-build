@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/hf-api/(.*)",
+      "destination": "https://router.huggingface.co/hf-inference/$1"
+    },
+    {
+      "source": "/rapidapi/(.*)",
+      "destination": "https://room-ai-virtual-staging-professional-interior-design.p.rapidapi.com/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
